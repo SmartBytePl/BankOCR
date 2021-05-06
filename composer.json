@@ -1,0 +1,8 @@
+{
+    "autoload": {
+        "psr-4": {"BankOCR\\": "src/"}
+    },
+    "require": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
