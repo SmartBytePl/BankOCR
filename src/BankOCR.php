@@ -23,11 +23,11 @@ class BankOCR
     private $parser;
 
     /**
+     * @param Parser $parser
      * @param InputValidatorInterface[] $inputValidators
      * @param OutputValidatorInterface[] $outputValidators
-     * @param Parser $parser
      */
-    public function __construct(array $inputValidators, array $outputValidators, Parser $parser)
+    public function __construct(Parser $parser, array $inputValidators, array $outputValidators)
     {
         $this->inputValidators = $inputValidators;
         $this->outputValidators = $outputValidators;
@@ -42,7 +42,7 @@ class BankOCR
     public function recognize(string $input): array
     {
         $results = [];
-        foreach ($this->splitInput($input) as $entryIndex => $entry) {
+        foreach ($this->splitBulkInput($input) as $entryIndex => $entry) {
             try {
                 $this->validateInput($entry);
                 $recognized = $this->parser->parse($entry);
@@ -84,13 +84,16 @@ class BankOCR
      * @param string $input
      * @return array
      */
-    private function splitInput(string $input): array
+    private function splitBulkInput(string $input): array
     {
         $inputArray = explode(PHP_EOL, $input);
         $chunks = array_chunk($inputArray, self::INPUT_ENTRY_LINES_COUNT);
 
         $results = [];
         foreach ($chunks as $chunk) {
+            if (count($chunk) < self::INPUT_ENTRY_LINES_COUNT) {
+                continue;
+            }
             $results[] = implode(PHP_EOL, $chunk);
         }
 

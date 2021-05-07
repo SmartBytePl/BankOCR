@@ -1,27 +1,34 @@
 <?php
 
-declare(strict_types=1);
-
 use BankOCR\Dictionary\DigitsSignaturesDictionary;
 use BankOCR\Factory\BankOCRFactory;
 use BankOCR\BankOCR;
 use BankOCR\Parser;
 use BankOCR\Validators\Input\HasLinesCountValidator;
 use BankOCR\Validators\Input\HasLinesLengthsValidator;
-use BankOCR\Validators\Output\ChecksumOutputValidator;
-use BankOCR\Validators\Output\FormatOutputValidator;
 use PHPUnit\Framework\TestCase;
 
 class FunctionalTests extends TestCase
 {
-    private const ENTRIES_PATH = __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.'entries';
+    private const FIXTURES_PATH = __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
+    private const ENTRIES_PATH = self::FIXTURES_PATH.'entries'.DIRECTORY_SEPARATOR;
 
     /** @var BankOCR */
     private $sut;
 
     protected function setUp(): void
     {
-        $this->sut = (new BankOCRFactory())->createBankAccountOCR();
+        $dictionary = new DigitsSignaturesDictionary();
+        $parser = new Parser($dictionary);
+
+        $inputValidators = [
+            new HasLinesCountValidator(),
+            new HasLinesLengthsValidator(),
+        ];
+
+        $outputValidators = [];
+
+        $this->sut = new BankOCR($parser, $inputValidators, $outputValidators);
     }
 
     /**
@@ -33,10 +40,39 @@ class FunctionalTests extends TestCase
      */
     public function testItShouldReturnTestEntries($expected, $input)
     {
-        $this->sut = $this->createBankAccountOCRWithOutOutputValidators();
         $result = $this->sut->recognize($input);
+        $resultAsString = implode(PHP_EOL, $result);
 
-        $this->assertSame($expected, $result[0]);
+        $this->assertSame($expected, $resultAsString);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldProcessUseCase1()
+    {
+        $bulkInput = file_get_contents(self::FIXTURES_PATH.'use_case_1_in.txt');
+        $bulkOutput = file_get_contents(self::FIXTURES_PATH.'use_case_1_out.txt');
+
+        $result = $this->sut->recognize($bulkInput);
+        $resultAsString = implode(PHP_EOL, $result).PHP_EOL;
+
+        $this->assertSame($bulkOutput, $resultAsString);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldProcessUseCase3()
+    {
+        $bulkInput = file_get_contents(self::FIXTURES_PATH.'use_case_3_in.txt');
+        $bulkOutput = file_get_contents(self::FIXTURES_PATH.'use_case_3_out.txt');
+
+        $this->sut = (new BankOCRFactory())->createBankAccountOCR();
+        $result = $this->sut->recognize($bulkInput);
+        $resultAsString = implode(PHP_EOL, $result).PHP_EOL;
+
+        $this->assertSame($bulkOutput, $resultAsString);
     }
 
     /**
@@ -48,7 +84,7 @@ class FunctionalTests extends TestCase
 
         $result = [];
         foreach ($files as $filename) {
-            $result [] = [$filename, $this->loadFixture($filename)];
+            $result [] = [$filename, $this->loadEntriesFixture($filename)];
         }
 
         return $result;
@@ -59,33 +95,8 @@ class FunctionalTests extends TestCase
      *
      * @return string
      */
-    private function loadFixture($filename): string
+    private function loadEntriesFixture($filename): string
     {
-        return file_get_contents(self::ENTRIES_PATH.DIRECTORY_SEPARATOR.$filename);
+        return file_get_contents(self::ENTRIES_PATH.$filename);
     }
-
-    /**
-     * @return BankOCR
-     */
-    private function createBankAccountOCRWithOutOutputValidators(): BankOCR
-    {
-        $linesLength = [27, 27, 27, 0];
-        $digitsCount = 9;
-        $digitWidth = 3;
-        $digitHeight = 3;
-        $resultRegExpMatch = '/^[0-9]{9}$/';
-
-        $dictionary = new DigitsSignaturesDictionary();
-        $parser = new Parser($dictionary, $digitsCount, $digitWidth, $digitHeight);
-
-        $inputValidators = [
-            new HasLinesCountValidator(count($linesLength)),
-            new HasLinesLengthsValidator($linesLength),
-        ];
-
-        $outputValidators = [];
-
-        return new BankOCR($inputValidators, $outputValidators, $parser);
-    }
-
 }

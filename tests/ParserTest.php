@@ -27,7 +27,7 @@ class ParserTest extends TestCase
             ->method('match')
             ->willReturn('5');
 
-        $this->sut = new Parser($this->dictionaryMock, 9, 3, 3);
+        $this->sut = new Parser($this->dictionaryMock);
     }
 
     /**

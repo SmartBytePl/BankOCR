@@ -23,7 +23,7 @@ class BankOCRTest extends TestCase
     protected function setUp(): void
     {
         $this->parserMock = $this->createMock(Parser::class);
-        $this->sut = new BankOCR([], [], $this->parserMock);
+        $this->sut = new BankOCR($this->parserMock, [], []);
     }
 
     /**
@@ -55,7 +55,7 @@ class BankOCRTest extends TestCase
             ->method('assertIsValid')
             ->willThrowException(new InputValidationException());
 
-        $this->sut = new BankOCR([$inputValidator], [], $this->parserMock);
+        $this->sut = new BankOCR($this->parserMock, [$inputValidator], []);
 
         $this->parserMock
             ->expects($this->never())
@@ -80,7 +80,7 @@ class BankOCRTest extends TestCase
             ->method('assertIsValid')
             ->willThrowException(new OutputValidationException());
 
-        $this->sut = new BankOCR([], [$outputValidator], $this->parserMock);
+        $this->sut = new BankOCR($this->parserMock, [], [$outputValidator]);
 
         $this->parserMock
             ->expects($this->once())

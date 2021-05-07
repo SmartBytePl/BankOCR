@@ -19,25 +19,19 @@ class BankOCRFactory
      */
     public function createBankAccountOCR(): BankOCR
     {
-        $linesLength = [27, 27, 27, 0];
-        $digitsCount = 9;
-        $digitWidth = 3;
-        $digitHeight = 3;
-        $resultRegExpMatch = '/^[0-9]{9}$/';
-
         $dictionary = new DigitsSignaturesDictionary();
-        $parser = new Parser($dictionary, $digitsCount, $digitWidth, $digitHeight);
+        $parser = new Parser($dictionary);
 
         $inputValidators = [
-            new HasLinesCountValidator(count($linesLength)),
-            new HasLinesLengthsValidator($linesLength),
+            new HasLinesCountValidator(),
+            new HasLinesLengthsValidator(),
         ];
 
         $outputValidators = [
-            new FormatOutputValidator($resultRegExpMatch),
+            new FormatOutputValidator(),
             new ChecksumOutputValidator(),
         ];
 
-        return new BankOCR($inputValidators, $outputValidators, $parser);
+        return new BankOCR($parser, $inputValidators, $outputValidators);
     }
 }

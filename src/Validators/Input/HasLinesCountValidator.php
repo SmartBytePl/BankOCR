@@ -16,7 +16,7 @@ class HasLinesCountValidator implements InputValidatorInterface
     /**
      * @param int $linesCount
      */
-    public function __construct(int $linesCount)
+    public function __construct(int $linesCount = 4)
     {
         $this->linesCount = $linesCount;
     }

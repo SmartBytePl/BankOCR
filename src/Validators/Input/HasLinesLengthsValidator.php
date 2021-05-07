@@ -16,7 +16,7 @@ class HasLinesLengthsValidator implements InputValidatorInterface
     /**
      * @param array $lineLengths
      */
-    public function __construct(array $lineLengths)
+    public function __construct(array $lineLengths = [27, 27, 27])
     {
         $this->lineLengths = $lineLengths;
     }
@@ -26,7 +26,7 @@ class HasLinesLengthsValidator implements InputValidatorInterface
     {
         foreach (explode(PHP_EOL, $input) as $key => $line) {
             $length = strlen($line);
-            if ($length !== $this->lineLengths[$key]) {
+            if (isset($this->lineLengths[$key]) && $length !== $this->lineLengths[$key]) {
                 throw new LinesLengthsValidationException(
                     sprintf(self::LINES_LENGTH_EXCEPTION_MESSAGE, $key, $this->lineLengths[$key], $length)
                 );

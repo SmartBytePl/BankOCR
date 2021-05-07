@@ -27,7 +27,7 @@ class Parser
      * @param int $digitWidth
      * @param int $digitHeight
      */
-    public function __construct(DictionaryInterface $dictionary, int $digitsCount, int $digitWidth, int $digitHeight)
+    public function __construct(DictionaryInterface $dictionary, int $digitsCount = 9, int $digitWidth = 3, int $digitHeight = 3)
     {
         $this->dictionary = $dictionary;
         $this->digitsCount = $digitsCount;

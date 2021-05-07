@@ -12,7 +12,7 @@ class FormatOutputValidator implements OutputValidatorInterface
     /**
      * @param string $matchExpression
      */
-    public function __construct(string $matchExpression)
+    public function __construct(string $matchExpression = '/^[0-9]{9}$/')
     {
         $this->matchExpression = $matchExpression;
     }
