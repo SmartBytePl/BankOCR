@@ -1,13 +1,13 @@
 <?php
 
-use BankOCR\Validators\FormatValidator;
+use BankOCR\Validators\Output\FormatOutputValidator;
 use PHPUnit\Framework\TestCase;
-use BankOCR\Exceptions\ValidationException;
+use BankOCR\Exceptions\Output\OutputValidationException;
 
 class FormatValidatorTest extends TestCase
 {
 
-    /** @var FormatValidator */
+    /** @var FormatOutputValidator */
     private $sut;
 
     /**
@@ -15,7 +15,7 @@ class FormatValidatorTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->sut = new FormatValidator();
+        $this->sut = new FormatOutputValidator('/^[0-9]{9}$/');
     }
 
     /**
@@ -37,7 +37,7 @@ class FormatValidatorTest extends TestCase
      */
     public function testAssertIsValidShouldThrowException(string $input)
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(OutputValidationException::class);
         $this->expectExceptionMessage('Incorrect string format, expecting: /^[0-9]{9}$/');
 
         $this->sut->assertIsValid($input);

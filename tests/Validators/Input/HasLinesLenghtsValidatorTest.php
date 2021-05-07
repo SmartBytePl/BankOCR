@@ -1,17 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 use PHPUnit\Framework\TestCase;
-use BankOCR\EntryParser;
-use BankOCR\Exceptions\EntryParserException;
+use BankOCR\Validators\Input\HasLinesLengthsValidator;
+use BankOCR\Exceptions\Input\LinesLengthsValidationException;
 
-
-class EntryParserTest extends TestCase
+class HasLinesLenghtsValidatorTest extends TestCase
 {
-    private const ENTRIES_PATH = __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.'entries';
-
-    /** @var EntryParser */
+    /** @var HasLinesLengthsValidator */
     private $sut;
 
     /**
@@ -19,34 +14,22 @@ class EntryParserTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->sut = new EntryParser();
-    }
-
-    /**
-     * @test
-     * @param $expected
-     * @param $input
-     *
-     * @dataProvider entriesProvider
-     */
-    public function testItShouldReturnTestEntries($expected, $input)
-    {
-        $result = $this->sut->parse($input);
-
-        $this->assertSame($expected, $result);
+        $this->sut = new HasLinesLengthsValidator([27, 27, 27, 0]);
     }
 
     /**
      * @test
      */
-    public function testShouldThrowExceptionWhenInputDoesNotHaveFourLines(): void
+    public function testShouldReturnNullWhenReturnHaveExpectedLineLengths(): void
     {
-        $input = '';
+        $input = '0123456789ABCDEFGHIJKLMNOPR'.PHP_EOL.
+            '0123456789ABCDEFGHIJKLMNOPR'.PHP_EOL.
+            '0123456789ABCDEFGHIJKLMNOPR'.PHP_EOL.
+            '';
 
-        $this->expectException(EntryParserException::class);
-        $this->expectExceptionMessage('Input should have exactly 4 lines, but contains 1');
+        $result = $this->sut->assertIsValid($input);
 
-        $this->sut->parse($input);
+        $this->assertNull($result);
     }
 
     /**
@@ -58,10 +41,10 @@ class EntryParserTest extends TestCase
      */
     public function testShouldThrowExceptionWhenInputDoesNotHaveExpectedLineLengths(string $input, string $message): void
     {
-        $this->expectException(EntryParserException::class);
+        $this->expectException(LinesLengthsValidationException::class);
         $this->expectExceptionMessage($message);
 
-        $this->sut->parse($input);
+        $this->sut->assertIsValid($input);
     }
 
     /**
@@ -98,22 +81,6 @@ class EntryParserTest extends TestCase
                 '0123456789ABCDEFGHIJKLMNOPR',
                 'Line 3 should have exactly 0 characters, but contains 27'
             ]
-
         ];
-    }
-
-    /**
-     * @return array
-     */
-    public function entriesProvider(): array
-    {
-        $files = array_diff(scandir(self::ENTRIES_PATH), array('..', '.'));
-
-        $result = [];
-        foreach ($files as $file) {
-            $result [] = [$file, file_get_contents(self::ENTRIES_PATH.DIRECTORY_SEPARATOR.$file)];
-        }
-
-        return $result;
     }
 }

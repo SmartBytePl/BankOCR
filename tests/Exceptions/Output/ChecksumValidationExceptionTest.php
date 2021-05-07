@@ -1,6 +1,6 @@
 <?php
 
-use BankOCR\Exceptions\ChecksumValidationException;
+use BankOCR\Exceptions\Output\ChecksumOutputValidationException;
 use PHPUnit\Framework\TestCase;
 
 class ChecksumValidationExceptionTest extends TestCase
@@ -10,7 +10,7 @@ class ChecksumValidationExceptionTest extends TestCase
      */
     public function testGetSymbol()
     {
-        $sut = new ChecksumValidationException();
+        $sut = new ChecksumOutputValidationException();
         $result = $sut->getSymbol();
 
         $this->assertSame('ERR', $result);

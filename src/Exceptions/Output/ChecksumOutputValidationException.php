@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BankOCR\Exceptions;
+namespace BankOCR\Exceptions\Output;
 
-class ChecksumValidationException extends ValidationException
+class ChecksumOutputValidationException extends OutputValidationException
 {
     private const EXCEPTION_SYMBOL = 'ERR';
 

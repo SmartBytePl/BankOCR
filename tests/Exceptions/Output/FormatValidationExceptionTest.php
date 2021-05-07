@@ -1,6 +1,6 @@
 <?php
 
-use BankOCR\Exceptions\FormatValidationException;
+use BankOCR\Exceptions\Output\FormatOutputValidationException;
 use PHPUnit\Framework\TestCase;
 
 class FormatValidationExceptionTest extends TestCase
@@ -10,7 +10,7 @@ class FormatValidationExceptionTest extends TestCase
      */
     public function testGetSymbol()
     {
-        $sut = new FormatValidationException();
+        $sut = new FormatOutputValidationException();
         $result = $sut->getSymbol();
 
         $this->assertSame('ILL', $result);

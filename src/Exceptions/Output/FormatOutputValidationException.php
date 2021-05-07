@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace BankOCR\Exceptions;
+namespace BankOCR\Exceptions\Output;
 
-class FormatValidationException extends ValidationException
+class FormatOutputValidationException extends OutputValidationException
 {
     private const EXCEPTION_SYMBOL = 'ILL';
 

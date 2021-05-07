@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BankOCR\Validators;
+namespace BankOCR\Validators\Output;
 
-use BankOCR\Exceptions\ChecksumValidationException;
+use BankOCR\Exceptions\Output\ChecksumOutputValidationException;
 
-class ChecksumValidator
+class ChecksumOutputValidator
 {
     /** {@inheritDoc} */
     public function assertIsValid(string $input): void
@@ -18,7 +18,7 @@ class ChecksumValidator
         }
 
         if ($sum % 11 != 0) {
-            throw new ChecksumValidationException();
+            throw new ChecksumOutputValidationException();
         }
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-use BankOCR\Exceptions\ValidationException;
+use BankOCR\Exceptions\Output\OutputValidationException;
 use PHPUnit\Framework\TestCase;
 
-class ValidationExceptionTest extends TestCase
+class OutputValidationExceptionTest extends TestCase
 {
     /**
      * @test
      */
     public function testGetSymbol()
     {
-        $sut = new ValidationException();
+        $sut = new OutputValidationException();
         $result = $sut->getSymbol();
 
         $this->assertSame('NAN', $result);

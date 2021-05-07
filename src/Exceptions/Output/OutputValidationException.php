@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace BankOCR\Exceptions;
+namespace BankOCR\Exceptions\Output;
 
 use \InvalidArgumentException;
 
-class ValidationException extends InvalidArgumentException
+class OutputValidationException extends InvalidArgumentException
 {
     /**
      * @return string

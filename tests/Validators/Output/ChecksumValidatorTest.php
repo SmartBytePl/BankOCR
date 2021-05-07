@@ -1,8 +1,8 @@
 <?php
 
-use BankOCR\Validators\ChecksumValidator;
 use PHPUnit\Framework\TestCase;
-use BankOCR\Exceptions\ValidationException;
+use BankOCR\Validators\Output\ChecksumOutputValidator;
+use BankOCR\Exceptions\Output\ChecksumOutputValidationException;
 
 class ChecksumValidatorTest extends TestCase
 {
@@ -10,7 +10,7 @@ class ChecksumValidatorTest extends TestCase
     private const CORRECT_INPUT_CHECKSUM2 = '345882865';
     private const NOT_CORRECT_INPUT_CHECKSUM = '345882860';
 
-    /** @var ChecksumValidator */
+    /** @var ChecksumOutputValidator */
     private $sut;
 
     /**
@@ -18,7 +18,7 @@ class ChecksumValidatorTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->sut = new ChecksumValidator();
+        $this->sut = new ChecksumOutputValidator();
     }
 
     /**
@@ -40,7 +40,7 @@ class ChecksumValidatorTest extends TestCase
      */
     public function testAssertIsValidShouldThrowException()
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(ChecksumOutputValidationException::class);
         $this->expectExceptionMessage('Checksum validation error.');
 
         $this->sut->assertIsValid(self::NOT_CORRECT_INPUT_CHECKSUM);
