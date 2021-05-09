@@ -36,10 +36,11 @@ class BankOCR
 
     /**
      * @param string $input
+     * @param bool $findSimilar
      *
      * @return array<int, string>
      */
-    public function recognize(string $input): array
+    public function recognize(string $input, bool $findSimilar = true): array
     {
         $results = [];
         foreach ($this->splitBulkInput($input) as $entryIndex => $entry) {
@@ -51,7 +52,39 @@ class BankOCR
             } catch (InputValidationException $e) {
                 $results[] = 'Skipping entry index: '.$entryIndex.' is not valid. '.$e->getMessage();
             } catch (OutputValidationException $e) {
-                $results[] = $recognized . ' ' . $e->getSymbol();
+                $errorMessage = ' '.$e->getSymbol();
+                if ($findSimilar) {
+                    $alternatives = $this->getValidAlternatives($entry);
+                    $recognized = $this->resolveBestMatch($alternatives, $recognized);
+                    $errorMessage = $this->resolveErrorMessage($alternatives);
+                }
+
+                $results[] = $recognized. $errorMessage;
+            }
+        }
+
+        return $results;
+    }
+
+    private function resolveBestMatch(array $alternatives, string $recognized)
+    {
+        return count($alternatives) === 1 ? $alternatives[0] : $recognized;
+    }
+
+    private function resolveErrorMessage($alternatives)
+    {
+        return count($alternatives) <= 1 ? '' : " AMB ['".implode("', '",$alternatives)."']";
+    }
+
+    private function getValidAlternatives(string $entry): array
+    {
+        $results = [];
+        $alternatives = $this->parser->parseSimilar($entry);
+        foreach ($alternatives as $alternative) {
+            try {
+                $this->validateOutput($alternative);
+                $results[] = $alternative;
+            } catch (OutputValidationException $e) {
             }
         }
 

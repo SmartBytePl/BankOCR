@@ -89,7 +89,7 @@ class BankOCRTest extends TestCase
 
         $input4Lines = PHP_EOL.PHP_EOL.PHP_EOL;
 
-        $result = $this->sut->recognize($input4Lines);
+        $result = $this->sut->recognize($input4Lines, false);
         $expected = ['123456789 NAN'];
 
         $this->assertSame($expected, $result);

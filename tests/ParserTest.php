@@ -5,12 +5,18 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use BankOCR\Parser;
 use BankOCR\Dictionary\DictionaryAbstract;
+use PHPUnit\Framework\MockObject\MockObject;
+
 
 class ParserTest extends TestCase
 {
     private const ENTRIES_PATH = __DIR__.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR.'entries';
+    private const SIMILAR_INPUT =
+        '    _  _     _  _  _  _  _ '.PHP_EOL.
+        '  | _| _||_| _ |_   ||_||_|'.PHP_EOL.
+        '  ||_  _|  | _||_|  ||_| _ ';
 
-    /** @var DictionaryAbstract */
+    /** @var DictionaryAbstract|MockObject */
     private $dictionaryMock;
 
     /** @var Parser */
@@ -71,6 +77,32 @@ class ParserTest extends TestCase
         $expectedOne = '   '.PHP_EOL.'  |'.PHP_EOL.'  |';
 
         $this->assertSame($expectedOne, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function testShouldReturnSimilarInputData()
+    {
+        $this->dictionaryMock
+            ->expects($this->exactly(9))
+            ->method('findSimilar')
+            ->willReturn(['6']);
+
+        $expected = [
+            '655555555',
+            '565555555',
+            '556555555',
+            '555655555',
+            '555565555',
+            '555556555',
+            '555555655',
+            '555555565',
+            '555555556',
+        ];
+
+        $result = $this->sut->parseSimilar(self::SIMILAR_INPUT);
+        $this->assertSame($expected, $result);
     }
 
     /**

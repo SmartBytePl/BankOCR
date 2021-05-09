@@ -69,6 +69,21 @@ class FunctionalTests extends TestCase
         $bulkOutput = file_get_contents(self::FIXTURES_PATH.'use_case_3_out.txt');
 
         $this->sut = (new BankOCRFactory())->createBankAccountOCR();
+        $result = $this->sut->recognize($bulkInput, false);
+        $resultAsString = implode(PHP_EOL, $result).PHP_EOL;
+
+        $this->assertSame($bulkOutput, $resultAsString);
+    }
+
+    /**
+     * @test
+     */
+    public function testItShouldProcessUseCase4()
+    {
+        $bulkInput = file_get_contents(self::FIXTURES_PATH.'use_case_4_in.txt');
+        $bulkOutput = file_get_contents(self::FIXTURES_PATH.'use_case_4_out.txt');
+
+        $this->sut = (new BankOCRFactory())->createBankAccountOCR();
         $result = $this->sut->recognize($bulkInput);
         $resultAsString = implode(PHP_EOL, $result).PHP_EOL;
 

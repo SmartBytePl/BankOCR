@@ -31,17 +31,14 @@ class DictionaryAbstract implements DictionaryInterface
     }
 
     /**
-     * @param string $sourceSignature
-     * @param int $distance
-     *
-     * @return array
+     * {@inheritDoc}
      */
-    public function findSimilar(string $sourceSignature, int $distance): array
+    public function findSimilar(string $sourceSignature, int $distance = 1): array
     {
         $similar = [];
         foreach ($this->signatures() as $key => $signature) {
-            if (levenshtein($sourceSignature, $signature) <= $distance) {
-                $similar[] = $key;
+            if (levenshtein($sourceSignature, $signature) === $distance) {
+                $similar[] = (string) $key;
             }
         }
 

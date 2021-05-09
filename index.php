@@ -7,5 +7,7 @@ use \BankOCR\Factory\BankOCRFactory;
 $bankOCRFactory = new BankOCRFactory();
 $bankOCR = $bankOCRFactory->createBankAccountOCR();
 
-$input = '';
-$bankOCR->recognize($input);
+$input = file_get_contents('php://stdin');
+$results = $bankOCR->recognize($input);
+
+echo implode(PHP_EOL, $results).PHP_EOL;

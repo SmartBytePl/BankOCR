@@ -53,6 +53,45 @@ class Parser
 
     /**
      * @param string $input
+     * @param int $distance
+     *
+     * @return array|string[]
+     */
+    public function parseSimilar(string $input, int $distance = 1): array
+    {
+        $alternatives = [];
+        $baseResult = [];
+        for ($digitId = 0; $digitId < $this->digitsCount; $digitId++) {
+            $sourceSignature = $this->extractSourceSignature($input, $digitId);
+            $baseResult[$digitId] = $this->dictionary->match($sourceSignature);
+            $alternatives[$digitId] = $this->dictionary->findSimilar($sourceSignature, $distance);
+        }
+
+        return $this->buildAlternatives($alternatives, $baseResult);
+    }
+
+
+    /**
+     * @param array $alternatives
+     * @param array $baseResult
+     * @return array
+     */
+    private function buildAlternatives(array $alternatives, array $baseResult): array
+    {
+        $results = [];
+        foreach ($alternatives as $digitId => $similarDigits) {
+            $alternative = $baseResult;
+            foreach ($similarDigits as $similarDigit) {
+                $alternative[$digitId] = $similarDigit;
+                $results[] = implode('', $alternative);
+            }
+        }
+
+        return $results === [] ? [$baseResult] : $results;
+    }
+
+    /**
+     * @param string $input
      * @param int $signatureIndex
      *
      * @return string

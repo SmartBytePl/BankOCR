@@ -79,15 +79,15 @@ class DigitsSignaturesDictionaryTest extends TestCase
     public function similarDigitsProvider(): array
     {
         return [
-            [self::ONE,   [1, 7]],
-            [self::TWO,   [2]],
-            [self::THREE, [3, 9]],
-            [self::FOUR,  [4]],
-            [self::FIVE,  [5, 6, 9]],
-            [self::SIX,   [5, 6, 8]],
-            [self::SEVEN, [1, 7]],
-            [self::EIGHT, [0, 6, 8, 9]],
-            [self::NINE,  [3, 5, 8, 9]],
+            [self::ONE,   ['7']],
+            [self::TWO,   []],
+            [self::THREE, ['9']],
+            [self::FOUR,  []],
+            [self::FIVE,  ['6', '9']],
+            [self::SIX,   ['5', '8']],
+            [self::SEVEN, ['1']],
+            [self::EIGHT, ['0', '6', '9']],
+            [self::NINE,  ['3', '5', '8']],
             [self::NONE,  []],
         ];
     }

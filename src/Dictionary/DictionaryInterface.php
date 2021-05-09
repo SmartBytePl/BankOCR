@@ -12,4 +12,12 @@ interface DictionaryInterface
      * @return string
      */
     public function match(string $sourceSignature): string;
+
+    /**
+     * @param string $sourceSignature
+     * @param int $distance
+     *
+     * @return array|string[]
+     */
+    public function findSimilar(string $sourceSignature, int $distance = 1): array;
 }
