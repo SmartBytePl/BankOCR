@@ -38,6 +38,11 @@ class BankOCRTest extends TestCase
 
         $input8Lines = PHP_EOL.PHP_EOL.PHP_EOL.PHP_EOL.PHP_EOL.PHP_EOL.PHP_EOL;
 
+        $this->parserMock
+            ->expects($this->once())
+            ->method('splitBulkInput')
+            ->willReturn([PHP_EOL.PHP_EOL.PHP_EOL, PHP_EOL.PHP_EOL.PHP_EOL]);
+
         $result = $this->sut->recognize($input8Lines);
         $expected = ['123456789', '123456789'];
 
@@ -63,6 +68,11 @@ class BankOCRTest extends TestCase
 
         $input4Lines = PHP_EOL.PHP_EOL.PHP_EOL;
 
+        $this->parserMock
+            ->expects($this->once())
+            ->method('splitBulkInput')
+            ->willReturn([$input4Lines]);
+
         $result = $this->sut->recognize($input4Lines);
         $expected = ['Skipping entry index: 0 is not valid. '];
 
@@ -81,6 +91,11 @@ class BankOCRTest extends TestCase
             ->willThrowException(new OutputValidationException());
 
         $this->sut = new BankOCR($this->parserMock, [], [$outputValidator]);
+
+        $this->parserMock
+            ->expects($this->once())
+            ->method('splitBulkInput')
+            ->willReturn(['123456789']);
 
         $this->parserMock
             ->expects($this->once())

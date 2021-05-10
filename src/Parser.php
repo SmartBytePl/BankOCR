@@ -10,6 +10,9 @@ use \RuntimeException;
 class Parser
 {
     /** @var int */
+    private $entryLinesCount;
+
+    /** @var int */
     private $digitsCount;
 
     /** @var int */
@@ -26,13 +29,15 @@ class Parser
      * @param int $digitsCount
      * @param int $digitWidth
      * @param int $digitHeight
+     * @param int $entryLinesCount
      */
-    public function __construct(DictionaryInterface $dictionary, int $digitsCount = 9, int $digitWidth = 3, int $digitHeight = 3)
+    public function __construct(DictionaryInterface $dictionary, int $digitsCount = 9, int $digitWidth = 3, int $digitHeight = 3, int $entryLinesCount = 4)
     {
         $this->dictionary = $dictionary;
         $this->digitsCount = $digitsCount;
         $this->digitWidth = $digitWidth;
         $this->digitHeight = $digitHeight;
+        $this->entryLinesCount = $entryLinesCount;
     }
 
     /**
@@ -68,6 +73,26 @@ class Parser
         }
 
         return $this->buildAlternatives($alternatives, $baseResult);
+    }
+
+    /**
+     * @param string $input
+     * @return array
+     */
+    public function splitBulkInput(string $input): array
+    {
+        $inputArray = explode(PHP_EOL, $input);
+        $chunks = array_chunk($inputArray, $this->entryLinesCount);
+
+        $results = [];
+        foreach ($chunks as $chunk) {
+            if (count($chunk) < $this->entryLinesCount) {
+                continue;
+            }
+            $results[] = implode(PHP_EOL, $chunk);
+        }
+
+        return $results;
     }
 
 

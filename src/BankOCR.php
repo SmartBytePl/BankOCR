@@ -11,8 +11,6 @@ use BankOCR\Validators\Output\OutputValidatorInterface;
 
 class BankOCR
 {
-    private const INPUT_ENTRY_LINES_COUNT = 4;
-
     /** @var InputValidatorInterface[] */
     private $inputValidators;
 
@@ -43,7 +41,7 @@ class BankOCR
     public function recognize(string $input, bool $findSimilar = true): array
     {
         $results = [];
-        foreach ($this->splitBulkInput($input) as $entryIndex => $entry) {
+        foreach ($this->parser->splitBulkInput($input) as $entryIndex => $entry) {
             try {
                 $this->validateInput($entry);
                 $recognized = $this->parser->parse($entry);
@@ -54,9 +52,10 @@ class BankOCR
             } catch (OutputValidationException $e) {
                 $errorMessage = ' '.$e->getSymbol();
                 if ($findSimilar) {
-                    $alternatives = $this->getValidAlternatives($entry);
-                    $recognized = $this->resolveBestMatch($alternatives, $recognized);
-                    $errorMessage = $this->resolveErrorMessage($alternatives);
+                    $alternatives = $this->parser->parseSimilar($entry);
+                    $validAlternatives = $this->filterValidAlternatives($alternatives);
+                    $recognized = $this->resolveBestMatch($validAlternatives, $recognized);
+                    $errorMessage = $this->resolveErrorMessage($validAlternatives);
                 }
 
                 $results[] = $recognized. $errorMessage;
@@ -66,20 +65,34 @@ class BankOCR
         return $results;
     }
 
-    private function resolveBestMatch(array $alternatives, string $recognized)
+    /**
+     * @param array|string[] $alternatives
+     * @param string $recognized
+     *
+     * @return string
+     */
+    private function resolveBestMatch(array $alternatives, string $recognized): string
     {
         return count($alternatives) === 1 ? $alternatives[0] : $recognized;
     }
 
-    private function resolveErrorMessage($alternatives)
+    /**
+     * @param $alternatives
+     *
+     * @return string
+     */
+    private function resolveErrorMessage($alternatives): string
     {
         return count($alternatives) <= 1 ? '' : " AMB ['".implode("', '",$alternatives)."']";
     }
 
-    private function getValidAlternatives(string $entry): array
+    /**
+     * @param array|string[] $alternatives
+     * @return array|string[]
+     */
+    private function filterValidAlternatives(array $alternatives): array
     {
         $results = [];
-        $alternatives = $this->parser->parseSimilar($entry);
         foreach ($alternatives as $alternative) {
             try {
                 $this->validateOutput($alternative);
@@ -92,6 +105,7 @@ class BankOCR
     }
 
     /**
+     * @param
      * @param string $entry
      * @throws InputValidationException
      */
@@ -112,25 +126,4 @@ class BankOCR
             $validator->assertIsValid($entry);
         }
     }
-
-    /**
-     * @param string $input
-     * @return array
-     */
-    private function splitBulkInput(string $input): array
-    {
-        $inputArray = explode(PHP_EOL, $input);
-        $chunks = array_chunk($inputArray, self::INPUT_ENTRY_LINES_COUNT);
-
-        $results = [];
-        foreach ($chunks as $chunk) {
-            if (count($chunk) < self::INPUT_ENTRY_LINES_COUNT) {
-                continue;
-            }
-            $results[] = implode(PHP_EOL, $chunk);
-        }
-
-        return $results;
-    }
-
 }

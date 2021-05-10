@@ -108,6 +108,22 @@ class ParserTest extends TestCase
     /**
      * @test
      */
+    public function testItShouldSplitBulkInputEntries()
+    {
+        $input8Lines = '1'.PHP_EOL.'2'.PHP_EOL.'3'.PHP_EOL.'4'.PHP_EOL.'5'.PHP_EOL.'6'.PHP_EOL.'7'.PHP_EOL.'8';
+
+        $result = $this->sut->splitBulkInput($input8Lines);
+        $expected = [
+            '1'.PHP_EOL.'2'.PHP_EOL.'3'.PHP_EOL.'4',
+            '5'.PHP_EOL.'6'.PHP_EOL.'7'.PHP_EOL.'8'
+        ];
+
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * @test
+     */
     public function testShouldReadInputData()
     {
         $input = $this->loadFixture('123456789');
