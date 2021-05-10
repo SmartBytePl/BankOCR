@@ -89,7 +89,7 @@ class Parser
             if (count($chunk) < $this->entryLinesCount) {
                 continue;
             }
-            $results[] = implode(PHP_EOL, $chunk);
+            $inputs[] = implode(PHP_EOL, $chunk);
         }
 
         return $inputs;
