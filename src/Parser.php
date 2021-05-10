@@ -76,15 +76,15 @@ class Parser
     }
 
     /**
-     * @param string $input
-     * @return array
+     * @param string $bulkInput
+     * @return array|string[]
      */
-    public function splitBulkInput(string $input): array
+    public function splitBulkInput(string $bulkInput): array
     {
-        $inputArray = explode(PHP_EOL, $input);
+        $inputArray = explode(PHP_EOL, $bulkInput);
         $chunks = array_chunk($inputArray, $this->entryLinesCount);
 
-        $results = [];
+        $inputs = [];
         foreach ($chunks as $chunk) {
             if (count($chunk) < $this->entryLinesCount) {
                 continue;
@@ -92,7 +92,7 @@ class Parser
             $results[] = implode(PHP_EOL, $chunk);
         }
 
-        return $results;
+        return $inputs;
     }
 
 

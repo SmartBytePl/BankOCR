@@ -33,26 +33,26 @@ class BankOCR
     }
 
     /**
-     * @param string $input
+     * @param string $bulkInput
      * @param bool $findSimilar
      *
      * @return array<int, string>
      */
-    public function recognize(string $input, bool $findSimilar = true): array
+    public function recognize(string $bulkInput, bool $findSimilar = true): array
     {
         $results = [];
-        foreach ($this->parser->splitBulkInput($input) as $entryIndex => $entry) {
+        foreach ($this->parser->splitBulkInput($bulkInput) as $inputIndex => $input) {
             try {
-                $this->validateInput($entry);
-                $recognized = $this->parser->parse($entry);
+                $this->validateInput($input);
+                $recognized = $this->parser->parse($input);
                 $this->validateOutput($recognized);
                 $results[] = $recognized;
             } catch (InputValidationException $e) {
-                $results[] = 'Skipping entry index: '.$entryIndex.' is not valid. '.$e->getMessage();
+                $results[] = 'Skipping entry index: '.$inputIndex.' is not valid. '.$e->getMessage();
             } catch (OutputValidationException $e) {
                 $errorMessage = ' '.$e->getSymbol();
                 if ($findSimilar) {
-                    $alternatives = $this->parser->parseSimilar($entry);
+                    $alternatives = $this->parser->parseSimilar($input);
                     $validAlternatives = $this->filterValidAlternatives($alternatives);
                     $recognized = $this->resolveBestMatch($validAlternatives, $recognized);
                     $errorMessage = $this->resolveErrorMessage($validAlternatives);
